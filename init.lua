@@ -55,11 +55,12 @@ if vim.g.vscode then
     { "q", "workbench.action.closeActiveEditor"},
     { '<Space>', 'workbench.action.quickOpen' },
     { 'e', 'workbench.view.explorer' },
+    { 'pu', 'put' },
   }
 
   for _, map in ipairs(mappings) do
     local leader_map = '<Leader>' .. map[1]
-    local command = string.format("<Cmd>call VSCodeNotify('%s')<CR>", map[2])
+    local command = map[2] == 'put' and '<Cmd>put<CR>' or string.format("<Cmd>call VSCodeNotify('%s')<CR>", map[2])
     vim.api.nvim_set_keymap('n', leader_map, command, { noremap = true })
     vim.api.nvim_set_keymap('x', leader_map, command, { noremap = true })
     vim.api.nvim_set_keymap('v', leader_map, command, { noremap = true })
