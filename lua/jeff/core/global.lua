@@ -30,3 +30,12 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 vim.schedule(function()
   vim.opt.clipboard = 'unnamedplus'
 end)
+
+-- Allow repeated indentation in visual mode
+vim.keymap.set('v', '>', '>gv', { noremap = true })
+vim.keymap.set('v', '<', '<gv', { noremap = true })
+
+-- Put clipboard contents on the next line
+vim.keymap.set('n', '<leader>pu', 'o<ESC>p', { noremap = true, desc = "Put clipboard contents on next line" })
+vim.keymap.set('v', '<leader>pu', '<ESC>o<ESC>p', { noremap = true, desc = "Put clipboard contents on next line" })
+

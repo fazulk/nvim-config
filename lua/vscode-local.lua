@@ -11,12 +11,6 @@ vim.api.nvim_create_autocmd('BufEnter', {
   command = 'call feedkeys("\\<Esc>")',
 })
 
--- Set mapleader to spac e
--- vim.g.mapleader = " "
-
--- Allow repeated indentation in visual mode
-vim.api.nvim_set_keymap('v', '>', '>gv', { noremap = true })
-vim.api.nvim_set_keymap('v', '<', '<gv', { noremap = true })
 
 -- Git and harpoon mappings
 local mappings = {
@@ -31,7 +25,6 @@ local mappings = {
   { 'q', 'workbench.action.closeActiveEditor' },
   { '<Space>', 'workbench.action.quickOpen' },
   { 'e', 'workbench.view.explorer' },
-  { 'pu', 'put' },
   { 'gp', 'gitlens.diffWithPreviousInDiffRight' },
   { 'gn', 'gitlens.diffWithNextInDiffRight' },
 }
