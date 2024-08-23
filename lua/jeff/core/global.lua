@@ -5,11 +5,9 @@ vim.g.maplocalleader = ' '
 vim.opt.ignorecase = true
 vim.opt.smartcase = true
 
---  See `:help hlsearch`
-vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
-
 -- Set highlight on search, but clear on pressing <Esc> in normal mode
 vim.opt.hlsearch = true
+--  See `:help hlsearch`
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 
 -- Highlight when yanking (copying) text
@@ -36,6 +34,5 @@ vim.keymap.set('v', '>', '>gv', { noremap = true })
 vim.keymap.set('v', '<', '<gv', { noremap = true })
 
 -- Put clipboard contents on the next line
-vim.keymap.set('n', '<leader>pu', 'o<ESC>p', { noremap = true, desc = "Put clipboard contents on next line" })
-vim.keymap.set('v', '<leader>pu', '<ESC>o<ESC>p', { noremap = true, desc = "Put clipboard contents on next line" })
-
+vim.keymap.set('n', '<leader>pu', 'o<ESC>p', { noremap = true, desc = 'Put clipboard contents on next line' })
+vim.keymap.set('v', '<leader>pu', '<ESC>o<ESC>p', { noremap = true, desc = 'Put clipboard contents on next line' })
