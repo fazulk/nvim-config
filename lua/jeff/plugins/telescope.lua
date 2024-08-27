@@ -86,11 +86,25 @@ return { -- Fuzzy Finder (files, lsp, etc)
     vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
 
     -- Function to get the visual selection
-    local function Get_visual_selection()
-      vim.cmd 'noau normal! "vy"'
-      local text = vim.fn.getreg 'v'
-      vim.fn.setreg('v', {})
-      text = string.gsub(text, '\n', '')
+    function get_visual_selection()
+      -- Save the current selection marks
+      local start_pos = vim.fn.getpos "'<"
+      local end_pos = vim.fn.getpos "'>"
+
+      -- Get the lines of the selection
+      local lines = vim.fn.getline(start_pos[2], end_pos[2])
+
+      -- Adjust the last line to only include up to the column of the end mark
+      if #lines > 0 then
+        lines[#lines] = string.sub(lines[#lines], 1, end_pos[3])
+        -- Adjust the first line to start from the column of the start mark
+        lines[1] = string.sub(lines[1], start_pos[3])
+      end
+
+      -- Join the lines and remove any newline characters
+      local text = table.concat(lines, '\n')
+      text = string.gsub(text, '\n', ' ')
+
       return text
     end
 
@@ -106,7 +120,7 @@ return { -- Fuzzy Finder (files, lsp, etc)
     vim.api.nvim_set_keymap(
       'v',
       '?',
-      [[:<C-u>lua require('telescope.builtin').grep_string({ search = Get_visual_selection() })<CR>]],
+      [[:<C-u>lua require('telescope.builtin').grep_string({ search = get_visual_selection() })<CR>]],
       { noremap = true, silent = true }
     )
 
