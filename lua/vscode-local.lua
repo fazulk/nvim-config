@@ -11,6 +11,9 @@ vim.api.nvim_create_autocmd('BufEnter', {
   command = 'call feedkeys("\\<Esc>")',
 })
 
+-- Set mapleader to spac e
+-- vim.g.mapleader = " "
+
 
 -- Git and harpoon mappings
 local mappings = {
