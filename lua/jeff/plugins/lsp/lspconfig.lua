@@ -25,6 +25,38 @@ return {
         -- See `:help vim.lsp.*` for documentation on any of the below functions
         local opts = { buffer = ev.buf, silent = true }
 
+        local function rename_and_save()
+          -- Store the current buffer number
+          local current_buf = vim.api.nvim_get_current_buf()
+
+          -- Perform the LSP rename
+          vim.lsp.buf.rename()
+
+          -- Use a timer to delay the saving operation
+          -- This ensures that the rename has completed
+          vim.defer_fn(function()
+            -- Get all buffer numbers
+            local buffers = vim.api.nvim_list_bufs()
+
+            for _, buf in ipairs(buffers) do
+              -- Check if the buffer is loaded and modified
+              if vim.api.nvim_buf_is_loaded(buf) and vim.api.nvim_buf_get_option(buf, 'modified') then
+                -- Get the buffer name (file path)
+                local bufname = vim.api.nvim_buf_get_name(buf)
+
+                -- Save the buffer if it's associated with a file
+                if bufname ~= '' then
+                  vim.api.nvim_buf_call(buf, function()
+                    vim.cmd 'silent write'
+                  end)
+                end
+              end
+            end
+
+            vim.api.nvim_set_current_buf(current_buf)
+          end, 100) -- 100ms delay, adjust if needed
+        end
+
         -- set keybinds
         opts.desc = 'Show LSP references'
         keymap.set('n', 'gR', '<cmd>Telescope lsp_references<CR>', opts) -- show definition, references
@@ -44,8 +76,10 @@ return {
         opts.desc = 'See available code actions'
         keymap.set({ 'n', 'v' }, '<leader>ca', vim.lsp.buf.code_action, opts) -- see available code actions, in visual mode will apply to selection
 
-        opts.desc = 'Smart rename'
-        keymap.set('n', '<leader>rn', vim.lsp.buf.rename, opts) -- smart rename
+        -- opts.desc = 'Smart rename'
+        -- keymap.set('n', '<F2>', vim.lsp.buf.rename, opts) -- smart rename
+        -- Set up a keymap to use this function
+        keymap.set('n', '<F2>', rename_and_save, { noremap = true, silent = true, desc = 'Smart rename' })
 
         opts.desc = 'Show buffer diagnostics'
         keymap.set('n', '<leader>D', '<cmd>Telescope diagnostics bufnr=0<CR>', opts) -- show  diagnostics for file
@@ -85,35 +119,14 @@ return {
           capabilities = capabilities,
         }
       end,
-      ['svelte'] = function()
-        -- configure svelte server
-        lspconfig['svelte'].setup {
-          capabilities = capabilities,
-          on_attach = function(client, bufnr)
-            vim.api.nvim_create_autocmd('BufWritePost', {
-              pattern = { '*.js', '*.ts' },
-              callback = function(ctx)
-                -- Here use ctx.match instead of ctx.file
-                client.notify('$/onDidChangeTsOrJsFile', { uri = ctx.match })
-              end,
-            })
-          end,
-        }
-      end,
-      ['graphql'] = function()
-        -- configure graphql language server
-        lspconfig['graphql'].setup {
-          capabilities = capabilities,
-          filetypes = { 'graphql', 'gql', 'svelte', 'typescriptreact', 'javascriptreact' },
-        }
-      end,
-      ['tsserver'] = function()
-        lspconfig['tsserver'].setup {
+      ['ts_ls'] = function()
+        lspconfig['ts_ls'].setup {
+          filetypes = { 'typescript', 'javascript', 'javascriptreact', 'typescriptreact', 'vue' },
           init_options = {
             plugins = {
               {
                 name = '@vue/typescript-plugin',
-                location = '/usr/local/lib/node_modules/@vue/typescript-plugin',
+                location = vim.fn.stdpath 'data' .. '/mason/packages/vue-language-server/node_modules/@vue/language-server',
                 languages = { 'vue' },
               },
             },
@@ -121,13 +134,7 @@ return {
         }
       end,
       ['volar'] = function()
-        lspconfig['volar'].setup {
-          init_options = {
-            vue = {
-              hybridMode = false,
-            },
-          },
-        }
+        lspconfig['volar'].setup {}
       end,
       ['emmet_ls'] = function()
         -- configure emmet language server
