@@ -11,7 +11,7 @@ vim.api.nvim_create_autocmd('BufEnter', {
   command = 'call feedkeys("\\<Esc>")',
 })
 
--- Set mapleader to spac e
+-- Set mapleader to space
 -- vim.g.mapleader = " "
 
 
